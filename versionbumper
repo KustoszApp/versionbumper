@@ -33,8 +33,6 @@ git_commit_safe_check() {
         exit 1
     fi
 
-    echo xx"$(git diff --numstat |awk '{print $1}')"xx
-    
     if [ "$(git diff --numstat |awk '{print $1}')" -gt 1 ]; then
         echo "Too many lines modified"
         exit 1
