@@ -1,3 +1,5 @@
+[![Kustosz](./kustosz_logo.svg)](https://www.kustosz.org)
+
 # Kustosz versionbumper
 
 Focus on the worthwhile content with Kustosz, open source self-hosted web application.
