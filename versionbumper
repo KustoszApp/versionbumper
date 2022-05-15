@@ -41,7 +41,7 @@ git_commit_safe_check() {
 
 make_git_commit_and_tag() {
     local next_version="$(find_next_version)"
-    if [ ! -z "$@" ]; then
+    if [ ! -z "$1" ]; then
         git add "$@"
         git commit -m "Release version $next_version"
     fi
@@ -68,8 +68,10 @@ update_package_json() {
     echo "Found package.json file"
     local next_version="$(find_next_version)"
     sed -i -e '/\s*"version": "[0-9\.]\+",/s/.*/  "version": "'"${next_version}"'",/' package.json
+    npm ci
     git_commit_safe_check
-    make_git_commit_and_tag package.json
+    npm install
+    make_git_commit_and_tag package.json package-lock.json
 }
 
 update_docs() {
