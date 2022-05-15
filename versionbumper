@@ -41,9 +41,13 @@ git_commit_safe_check() {
 
 make_git_commit_and_tag() {
     local next_version="$(find_next_version)"
-    git add "$@"
-    git commit -m "Release version $next_version"
-    git tag "$next_version"
+    if [ ! -z "$@" ]; then
+        git add "$@"
+        git commit -m "Release version $next_version"
+    fi
+    git tag -m "Release version $next_version" "$next_version"
+    echo "Push changes with:"
+    echo "  git push --atomic origin main $next_version"
 }
 
 update_pyproject_toml() {
@@ -68,9 +72,18 @@ update_package_json() {
     make_git_commit_and_tag package.json
 }
 
+update_docs() {
+    if [ ! -e "source/conf.py" ] || [ ! -d "build" ]; then
+        return
+    fi
+    echo "Found documentation directory"
+    make_git_commit_and_tag
+}
+
 main() {
     update_pyproject_toml
     update_package_json
+    update_docs
 }
 
 main
