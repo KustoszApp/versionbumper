@@ -41,7 +41,7 @@ git_commit_safe_check() {
 
 make_git_commit_and_tag() {
     local next_version="$(find_next_version)"
-    if [ ! -z "$1" ]; then
+    if [ ! -z "${1:+x}" ]; then
         git add "$@"
         git commit -m "Release version $next_version"
     fi
@@ -82,10 +82,22 @@ update_docs() {
     make_git_commit_and_tag
 }
 
+update_installer() {
+    if [ ! -e "galaxy.yml" ]; then
+        return
+    fi
+    echo "Found kustosz-installer directory"
+    local next_version="$(find_next_version |sed -e 's/\.0\([1-9]\)\./.\1./')"
+    sed -i -e '/^version/s/.*/version: '"${next_version}"'/' galaxy.yml
+    git_commit_safe_check
+    make_git_commit_and_tag galaxy.yml
+}
+
 main() {
     update_pyproject_toml
     update_package_json
     update_docs
+    update_installer
 }
 
 main
